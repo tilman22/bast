@@ -1,0 +1,23 @@
+name: MongoDB Write
+
+on:
+  workflow_dispatch:
+
+jobs:
+  write:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Python Setup
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Dependencies installieren
+        run: pip install -r requirements.txt
+
+      - name: Dummy-Datensatz schreiben
+        env:
+          MONGO_URI: ${{ secrets.MONGO_URI }}
+        run: python3 mongo_write.py
