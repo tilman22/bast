@@ -1,10 +1,18 @@
 import os
 import dns.resolver
+
+_orig_read_resolv_conf = dns.resolver.Resolver.read_resolv_conf
+
+def _patched_read_resolv_conf(self, f):
+    try:
+        _orig_read_resolv_conf(self, f)
+    except (FileNotFoundError, OSError):
+        self.nameservers = ["8.8.8.8"]
+
+dns.resolver.Resolver.read_resolv_conf = _patched_read_resolv_conf
+
 from pymongo import MongoClient
 from datetime import datetime
-
-dns.resolver.default_resolver = dns.resolver.Resolver(configure=False)
-dns.resolver.default_resolver.nameservers = ["8.8.8.8"]
 
 uri = os.getenv("MONGO_URI")
 if not uri:
