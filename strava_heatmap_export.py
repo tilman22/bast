@@ -193,25 +193,33 @@ def main() -> None:
         + """
 Examples
 --------
-  # Berlin at zoom 12
+  # Munich 100 km radius (default bbox), all activities, zoom 11
+  python strava_heatmap_export.py \\
+    --cookies "CloudFront-Key-Pair-Id=XXX; CloudFront-Policy=YYY; CloudFront-Signature=ZZZ" \\
+    --output munich_100km.png
+
+  # Munich 100 km radius, cycling only, blue colour, zoom 12
+  python strava_heatmap_export.py \\
+    --cookies-file cookies.txt --activity ride --color blue --zoom 12 \\
+    --output munich_100km_cycling.png
+
+  # Custom region
   python strava_heatmap_export.py \\
     --bbox 52.35,13.10,52.65,13.65 --zoom 12 \\
-    --cookies "CloudFront-Key-Pair-Id=XXX; CloudFront-Policy=YYY; CloudFront-Signature=ZZZ" \\
-    --output berlin_heatmap.png
-
-  # Munich cycling heatmap, blue colour
-  python strava_heatmap_export.py \\
-    --bbox 48.00,11.30,48.30,11.80 --zoom 13 \\
-    --cookies-file cookies.txt --activity ride --color blue \\
-    --output munich_cycling.png
+    --cookies-file cookies.txt --output berlin_heatmap.png
 """,
     )
 
+    # Default bbox: 100 km radius around Munich (48.137°N 11.576°E)
+    # ±0.90° lat  (1° ≈ 111 km)
+    # ±1.35° lon  (1° ≈ 74 km at 48°N)
+    MUNICH_100KM = "47.237,10.226,49.037,12.926"
+
     parser.add_argument(
         "--bbox",
-        required=True,
+        default=MUNICH_100KM,
         metavar="LAT_MIN,LON_MIN,LAT_MAX,LON_MAX",
-        help="Geographic bounding box to export",
+        help=f"Geographic bounding box to export (default: 100 km around Munich = {MUNICH_100KM})",
     )
     parser.add_argument(
         "--zoom",
